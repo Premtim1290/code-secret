@@ -78,3 +78,15 @@ Les neuf exemples T01–T09 du contrat sont inclus dans les 17 tests. Les détai
 - **Rendus pédagogiques :** le retour sur le jeu d’un camarade, les tags `jalon-1` et `final` et la capsule individuelle restent à compléter. J1 : 20/11/2026 au soir ; J2 : 18/12/2026 au soir. La capsule de 4 à 5 minutes, écran et voix, doit être déposée sur Cyberlearn et non dans le dépôt public.
 
 Le jeu ne demande aucun compte et n’intègre ni paiement, classement en ligne, clé API, service d’IA ou collecte de données personnelles.
+
+## 6. Appareils testés
+
+Le jeu a été testé sur Ma.
+
+### Tests sur téléphone
+
+Le jeu a été testé sur iPhone 12 Pro. Le jeu a été fonctionnel. 
+
+## 7. Certification d'un camarade
+
+Le jeu et l'API ont été testé par un camarade. Aucun bug à signalé.
