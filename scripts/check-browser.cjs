@@ -1,0 +1,54 @@
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const assert = require('node:assert/strict');
+const base = process.env.BROWSER_TEST_URL || 'http://127.0.0.1:8000/';
+(async()=>{
+const browser=await chromium.launch({headless:true,channel:'chrome'});
+const page=await browser.newPage({viewport:{width:1280,height:1100}});
+const errors=[]; page.on('pageerror',e=>errors.push(e.message));
+await page.goto(`${base}?test=1`);
+await page.waitForFunction(()=>window.codeSecretTest);
+assert.equal(await page.evaluate(()=>codeSecretTest.getState().status),'not-started');
+await page.evaluate(()=>codeSecretTest.startGame({secret:['rouge','rouge','bleu','vert']}));
+await page.getByRole('button',{name:'Valider la proposition'}).click();
+assert.equal(await page.evaluate(()=>codeSecretTest.getState().attempts),0);
+assert.match(await page.locator('#message').innerText(),/Choisissez/);
+for(const [i,c] of ['rouge','bleu','rouge','vert'].entries()) await page.getByLabel(`Couleur en position ${i+1}`).selectOption(c);
+await page.getByRole('button',{name:'Valider la proposition'}).click();
+assert.equal(await page.evaluate(()=>codeSecretTest.getState().attempts),1);
+assert.equal(await page.locator('.history-row.filled').count(),1);
+assert.equal(await page.locator('.filled .well').innerText(),'2');
+assert.equal(await page.locator('.filled .misplaced').innerText(),'2');
+await page.screenshot({path:'/tmp/mastermind-desktop.png',fullPage:true});
+// API calls must update the same visible history and counter.
+await page.evaluate(()=>codeSecretTest.submitGuess(['rouge','rouge','bleu','vert']));
+assert.equal(await page.locator('.filled').count(),2);
+assert.match(await page.locator('#message').innerText(),/gagné/);
+assert.ok(await page.locator('#submit').isDisabled());
+await page.evaluate(()=>codeSecretTest.submitGuess(null));
+assert.equal(await page.locator('.filled').count(),2);
+await page.getByRole('button',{name:'Nouvelle partie'}).click();
+assert.equal(await page.locator('.filled').count(),0);
+const before=await page.content();
+await page.evaluate(async()=>{try {await codeSecretTest.startGame({secret:null});} catch(e){if(e.code!=='invalid-type')throw e;}});
+assert.equal(await page.content(),before);
+await page.evaluate(async()=>{await codeSecretTest.startGame({secret:['rouge','rouge','rouge','rouge']}); for(let i=0;i<10;i++)await codeSecretTest.submitGuess(['bleu','bleu','bleu','bleu']);});
+assert.equal(await page.locator('.filled').count(),10); assert.match(await page.locator('#message').innerText(),/perdue/);
+assert.equal(await page.locator('#counter').innerText(),'10 / 10');
+// Reload clears imposed secret and returns to not-started.
+await page.reload(); await page.waitForFunction(()=>window.codeSecretTest);
+assert.equal(await page.evaluate(()=>codeSecretTest.getState().status),'not-started');
+await page.goto(base);
+assert.equal(await page.evaluate(()=>typeof window.codeSecretTest),'undefined');
+assert.ok(await page.locator('#submit').isEnabled());
+// Small touch viewport, standard keyboard and native controls.
+await page.setViewportSize({width:375,height:812});
+assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth));
+await page.getByLabel('Couleur en position 1').focus();
+await page.keyboard.press('ArrowDown'); await page.keyboard.press('Tab');
+assert.equal(await page.locator(':focus').getAttribute('aria-label'),'Couleur en position 2');
+for(const [i,c] of ['rouge','bleu','orange','violet'].entries()) await page.getByLabel(`Couleur en position ${i+1}`).selectOption(c);
+await page.screenshot({path:'/tmp/mastermind-mobile.png',fullPage:true});
+assert.deepEqual(errors,[]);
+console.log('Navigateur Chromium : OK (API/interface, refus, victoire, défaite, redémarrage, rechargement, absence API normale, clavier, largeur 375 px, aucune erreur JS).');
+await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

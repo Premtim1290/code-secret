@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#193f37">
+  <meta name="description" content="Un code de quatre couleurs, dix essais. Un jeu de logique inspiré du Mastermind.">
+  <title>Code secret · Le jeu des couleurs</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./js/app.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">●<br>● ●</span> CODE SECRET</a><span class="edition">LE JEU DES COULEURS <span> / </span> v1.0.0</span></header>
+  <main>
+    <section class="intro" aria-labelledby="title"><p class="eyebrow">UN PEU DE LOGIQUE. UNE TOUCHE D’INTUITION.</p><h1 id="title">À vous de<br>percer le <em>code.</em></h1><p>Quatre couleurs se cachent dans le bon ordre.<br>Dix essais pour les démasquer.</p><div class="rule-chips"><span>4 positions</span><span>6 couleurs</span><span>10 essais</span></div></section>
+    <div class="game-layout">
+      <section class="board card" aria-labelledby="board-title">
+        <div class="card-heading"><div><p class="eyebrow">VOTRE ENQUÊTE</p><h2 id="board-title">Le tableau des essais</h2></div><span id="counter" class="counter">0 / 10</span></div>
+        <div class="table-labels" aria-hidden="true"><span>ESSAI</span><span>VOTRE PROPOSITION</span><span>BIEN / MAL</span></div>
+        <ol id="history" aria-label="Historique des essais"></ol>
+        <p class="board-note">Les indices donnent des totaux, jamais les positions.</p>
+      </section>
+      <div class="side-column">
+        <section class="composer card" aria-labelledby="composer-title">
+          <div class="card-heading"><div><p class="eyebrow" id="turn-label">À VOUS DE JOUER</p><h2 id="composer-title">Composez votre code</h2></div><span class="small-star" aria-hidden="true">✳</span></div>
+          <p class="helper">Choisissez une couleur à chaque position.<br>Une même couleur peut revenir plusieurs fois.</p>
+          <form id="guess-form" novalidate><fieldset id="guess-fields"><legend class="sr-only">Les quatre couleurs de votre proposition</legend><div id="slots" class="slots"></div></fieldset><button id="submit" type="submit" class="primary">Valider la proposition <span aria-hidden="true">↗</span></button></form>
+          <div id="message" class="message" role="status" aria-live="polite" aria-atomic="true"></div>
+          <button id="new-game" type="button" class="secondary">↻ &nbsp; Nouvelle partie</button>
+        </section>
+        <section class="rules" aria-labelledby="rules-title"><p class="eyebrow">LE PETIT MÉMO</p><h2 id="rules-title">Chaque indice compte.</h2><p><strong><span class="hint-dot dark"></span> Bien placée</strong><br>La bonne couleur, à la bonne position.</p><p><strong><span class="hint-dot light"></span> Mal placée</strong><br>La bonne couleur, à une autre position.</p><details><summary>Toutes les règles</summary><p>Le code secret est tiré au hasard parmi rouge, bleu, vert, jaune, orange et violet. Il reste fixe et caché, même après la fin.</p><p>Vous avez dix essais de quatre couleurs. Les répétitions sont autorisées. Vous pouvez modifier chaque position avant de valider. Une saisie incomplète est expliquée et ne consomme aucun essai.</p><p>Les couleurs bien placées sont comptées d’abord, puis les mal placées parmi les occurrences restantes. Chaque occurrence ne compte qu’une fois.</p><p>Quatre bien placées donnent la victoire, même au dixième essai. Sinon, le dixième essai termine la partie. « Nouvelle partie » efface le tableau et tire un nouveau code.</p><p>Clavier : Tab pour naviguer, flèches pour choisir une couleur, Entrée pour valider.</p></details></section>
+      </div>
+    </div>
+  </main>
+  <footer><span>Un jeu de déduction, inspiré du Mastermind.</span><span>À chaque essai, une piste de plus.</span></footer>
+  <noscript>Activez JavaScript pour jouer à Code secret.</noscript>
+</body>
+</html>
